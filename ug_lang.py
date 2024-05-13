@@ -1,8 +1,14 @@
 from langchain.schema import Document
 from fastapi import FastAPI
-from controllers.u_controllers import UploadUGVector,getUtweet,getUanswer,getUtranslate
+from controllers.u_controllers import UploadUGVector,getUtweet,getUanswer,getUtranslate,UploadUGImageUUrl,getUimageuurl,AssessUContent
 from models.u_models import uTweet,uAnswer,ucorrect
 app = FastAPI()
+
+
+@app.get("/uFetchuUimageurl")
+def ufetch_uimageuurl(ucontext: str = ""):
+	uuimageurl = getUimageuurl(ucontext)
+	return uuimageurl
 
 
 @app.get("/uUploadVector")
@@ -14,6 +20,11 @@ def split_lang():
 			print(e)
 			return {"success_code":0}
 
+
+@app.get("/uUploadImageuUrl")
+def split_uimageurl():
+	doc_ucontent = UploadUGImageUUrl("uimageuurl.txt")
+	return doc_ucontent
 
 
 @app.post("/api/utweet")
@@ -28,14 +39,10 @@ def get_utweet(body: uTweet):
 
 @app.post("/api/uanswer")
 def get_uanswer(body: uAnswer):
-	try:
-		question = body.question
-		u_answerGenerated = getUanswer(question)
-		return {"UGEN":u_answerGenerated}
-	except Exception as e:
-		print(e)
-		return {"uGEN":"ERROR"}
-
+	question = body.question
+	print(question)
+	u_answerGenerated = AssessUContent(question)
+	return {"UGEN":str(u_answerGenerated)}
 
 @app.post("/api/utranslate")
 def get_utranslate(body: ucorrect):
