@@ -10,3 +10,8 @@ class uAnswer(BaseModel):
 
 class ucorrect(BaseModel):
 	ucgrammar:dict
+
+class loginUmodel(BaseModel):
+	username:str
+	password:str
+	

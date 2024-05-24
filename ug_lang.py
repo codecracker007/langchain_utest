@@ -5,23 +5,38 @@ from models.u_models import uTweet,uAnswer,ucorrect
 app = FastAPI()
 
 
+'''@app.post("/login")
+def ulogin(ubody:loginUmodel):
+	if type(ubody.username) != 'string' or type(ubody.password) != 'string':
+		return "Username and password Must be of type string"
+
+
+
+	
+@app.post("/register")
+def uregister(ubody:registerUmodel):'''
+
+
+
+
+
 @app.get("/uFetchuUimageurl")
 def ufetch_uimageuurl(ucontext: str = ""):
 	uuimageurl = getUimageuurl(ucontext)
 	return uuimageurl
 
 
-@app.get("/uUploadVector")
+@app.get("/api/uUploadVector")
 def split_lang():
 		try:
-			doc_ucontent = UploadUGVector("myfile.txt")
+			doc_ucontent = UploadUGVector("newu.txt")
 			return {"success_code":1}
 		except Exception as e:
 			print(e)
 			return {"success_code":0}
 
 
-@app.get("/uUploadImageuUrl")
+@app.get("/api/uUploadImageuUrl")
 def split_uimageurl():
 	doc_ucontent = UploadUGImageUUrl("uimageuurl.txt")
 	return doc_ucontent
