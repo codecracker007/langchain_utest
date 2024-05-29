@@ -1,7 +1,7 @@
 from langchain.schema import Document
 from fastapi import FastAPI
-from controllers.u_controllers import UploadUGVector,getUtweet,getUanswer,getUtranslate,UploadUGImageUUrl,getUimageuurl,AssessUContent
-from models.u_models import uTweet,uAnswer,ucorrect
+from controllers.u_controllers import UploadUGVector,getUtweet,getUanswer,getUtranslate,UploadUGImageUUrl,getUimageuurl,AssessUContent,InsertQuestionU
+from models.u_models import uTweet,uAnswer,ucorrect,QuestionUmodel
 app = FastAPI()
 
 
@@ -20,11 +20,24 @@ def uregister(ubody:registerUmodel):'''
 
 
 
+
+
+
+
 @app.get("/uFetchuUimageurl")
 def ufetch_uimageuurl(ucontext: str = ""):
 	uuimageurl = getUimageuurl(ucontext)
 	return uuimageurl
 
+
+@app.post("/api/question")
+def insQuestion(body:QuestionUmodel):
+	try:
+		idU = InsertQuestionU(body)
+		return {"STATUS":"SUCCESS","insertedID":idU}
+	except Exception as e:
+		print(e)
+		return{"STATUS":"ERROR"}
 
 @app.get("/api/uUploadVector")
 def split_lang():

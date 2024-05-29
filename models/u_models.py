@@ -14,4 +14,20 @@ class ucorrect(BaseModel):
 class loginUmodel(BaseModel):
 	username:str
 	password:str
-	
+
+
+class QuestionUmodel(BaseModel):
+	Class:str
+	subject:str
+	topic:str
+	subtopic:str
+	question:str
+	option1:str
+	option2:str
+	option3:str
+	option4:str
+	correctanswer:str|None
+	level:str
+	explaination:str
+	image:str
+	questionset:str
