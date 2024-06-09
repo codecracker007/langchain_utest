@@ -1,20 +1,53 @@
 from langchain.schema import Document
-from fastapi import FastAPI
-from controllers.u_controllers import UploadUGVector,getUtweet,getUanswer,getUtranslate,UploadUGImageUUrl,getUimageuurl,AssessUContent,InsertQuestionU
-from models.u_models import uTweet,uAnswer,ucorrect,QuestionUmodel
+from fastapi import FastAPI,Request,Response
+from fastapi.responses import JSONResponse
+from controllers.u_controllers import UploadUGVector,getUtweet,getUanswer,getUtranslate,UploadUGImageUUrl,getUimageuurl,AssessUContent,InsertQuestionU,loginU,registerU,forgotPasswordU
+from models.u_models import uTweet,uAnswer,ucorrect,QuestionUmodel,loginUmodel,registerUmodel
+import jwt
+
 app = FastAPI()
 
 
-'''@app.post("/login")
-def ulogin(ubody:loginUmodel):
+@app.post("/login")
+def ulogin(ubody:loginUmodel,request:Request,response:Response):
 	if type(ubody.username) != 'string' or type(ubody.password) != 'string':
 		return "Username and password Must be of type string"
+	if loginU(ubody.username,ubody.password):
+		try:
+			token = jwt.encode({"user":ubody.username},"SECRET_UG",algorithms=["HS256"])
+			response.set_cookie("session",token)
+		except Exception as e:
+			print(e)
+			JSONResponse(content={"ERROR":"Something Went Wrong While Logging In"},status_code=500)
+
+			
+
+			
+@app.post("/forgotpasswordU")
+def uForgotPassword(ubody:ForgotPasswordUmodel):
+	if type(ubody.email) != 'string':
+		return "email must be a string"
+	status = forgotPasswordU(ubody)
+	JSONResponse(context={"STATUS":status},status_code=200)
 
 
 
 	
 @app.post("/register")
-def uregister(ubody:registerUmodel):'''
+def uregister(ubody:registerUmodel):
+	try:
+		if registerU(ubody):
+			JSONResponse(content={"SUCCESS":"User Created"},status_code=200)
+		JSONResponse(content={"ERROR":"Username or Email Already Exists"},status_code=400)
+	except Exception as e:
+		print(e)
+		JSONResponse(content={"ERROR":"Something Went Wrong while registering"},status_code=500)
+
+
+
+
+
+
 
 
 

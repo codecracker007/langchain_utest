@@ -14,7 +14,10 @@ class ucorrect(BaseModel):
 class loginUmodel(BaseModel):
 	username:str
 	password:str
-
+class registerUmodel(BaseModel):
+	username:str
+	password:str
+	email:str
 
 class QuestionUmodel(BaseModel):
 	Class:str
