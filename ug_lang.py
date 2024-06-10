@@ -1,7 +1,7 @@
 from langchain.schema import Document
 from fastapi import FastAPI,Request,Response
 from fastapi.responses import JSONResponse
-from controllers.u_controllers import UploadUGVector,getUtweet,getUanswer,getUtranslate,UploadUGImageUUrl,getUimageuurl,AssessUContent,InsertQuestionU,loginU,registerU,forgotPasswordU
+from controllers.u_controllers import UploadUGVector,getUtweet,getUanswer,getUtranslate,UploadUGImageUUrl,getUimageuurl,AssessUContent,InsertQuestionU,loginU,registerU,forgotPasswordU,updatePasswordU
 from models.u_models import uTweet,uAnswer,ucorrect,QuestionUmodel,loginUmodel,registerUmodel
 import jwt
 
@@ -29,6 +29,18 @@ def uForgotPassword(ubody:ForgotPasswordUmodel):
 		return "email must be a string"
 	status = forgotPasswordU(ubody)
 	JSONResponse(context={"STATUS":status},status_code=200)
+
+@app.get("/reset_passwordU")
+def uResetPassword(password: str = "",token : str=""):
+	if password and token:
+		resu = updatePasswordU(password,token)
+		JSONResponse(content={"STATUS":resu},status_code=200)
+	if password and not token:
+		JSONResponse(content={"STATUS":"Provide a token"})
+	if not password and token:
+		JSONResponse(content={"STATUS":"Provide A new Password"})
+	JSONResponse(content={"STATUS":"Provide a username and a password"})
+
 
 
 
