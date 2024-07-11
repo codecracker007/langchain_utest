@@ -1,11 +1,23 @@
 from langchain.schema import Document
-from fastapi import FastAPI,Request,Response
+from fastapi import FastAPI,Request,Response,Depends
 from fastapi.responses import JSONResponse
 from controllers.u_controllers import UploadUGVector,getUtweet,getUanswer,getUtranslate,UploadUGImageUUrl,getUimageuurl,AssessUContent,InsertQuestionU,loginU,registerU,forgotPasswordU,updatePasswordU
-from models.u_models import uTweet,uAnswer,ucorrect,QuestionUmodel,loginUmodel,registerUmodel
+from models.u_models import uTweet,uAnswer,ucorrect,QuestionUmodel,loginUmodel,registerUmodel,ForgotPasswordUmodel
 import jwt
 
 app = FastAPI()
+
+def auth_middleware(request:Request):
+	token = request.headers.get("session")
+	if not token:
+		raise HTTPException(status_code=401, detail="No Session Found")
+	try:
+		jwt.decode(token,"SECRET_UG",algorithms=["HS256"])
+	except Exception as e:
+		print(e)
+		raise HTTPException(status_code=401, detail="No Session Found")
+
+
 
 
 @app.post("/login")
@@ -111,10 +123,10 @@ def get_utweet(body: uTweet):
 		return {"uGEN":"ERROR"}
 
 @app.post("/api/uanswer")
-def get_uanswer(body: uAnswer):
+def get_uanswer(body: uAnswer,request:Request):
 	question = body.question
 	print(question)
-	u_answerGenerated = AssessUContent(question)
+	u_answerGenerated = AssessUContent(question,"TESTUG")
 	return {"UGEN":str(u_answerGenerated)}
 
 @app.post("/api/utranslate")

@@ -19,6 +19,10 @@ class registerUmodel(BaseModel):
 	password:str
 	email:str
 
+class ForgotPasswordUmodel(BaseModel):
+	username:str
+	email:str
+
 class QuestionUmodel(BaseModel):
 	Class:str
 	subject:str
