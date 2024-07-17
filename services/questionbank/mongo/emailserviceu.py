@@ -1,19 +1,20 @@
-import smtplib,ssl
+import smtplib
+from email.mime.text import MIMEText
 
-port = 587
 
-smtp_server = "smtp.gmail.com"
-sender_emailu = "testu@gmail.com"
-password="test"
 
-def send_mail(email,token):
-    context = ssl.create_default_context()
-    with smtplib.SMTP(smtp_server,port) as server:
-        message = f"Heres Your Reset Token Link http://domainU/reset_passwordU?token={token}"
-        server.ehlo()
-        server.starttls(context=context)
-        server.ehlo()
-        server.login(sender_emailu,password)
-        server.sendmail(sender_emailu,email,message)
-        
 
+def send_email(email,token):
+    subject = "Forgot Password"
+    body = f"Here is your reset password link https://sahasra.ai/ressetpassword?token={token}"
+    sender = "administrator@sahasra.ai"
+    recipients = [email]
+    password = "Bisleri12!@"
+    msg = MIMEText(body)
+    msg['Subject'] = subject
+    msg['From'] = sender
+    msg['To'] = ', '.join(recipients)
+    with smtplib.SMTP_SSL('webhosting2052.is.cc', 465) as smtp_server:
+       smtp_server.login(sender, password)
+       smtp_server.sendmail(sender, recipients, msg.as_string())
+    print("Message sent!")

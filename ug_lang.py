@@ -127,6 +127,7 @@ def get_uanswer(body: uAnswer,request:Request):
 	question = body.question
 	print(question)
 	u_answerGenerated = AssessUContent(question,"TESTUG")
+	print(u_answerGenerated)
 	return {"UGEN":str(u_answerGenerated)}
 
 @app.post("/api/utranslate")
