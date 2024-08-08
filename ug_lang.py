@@ -1,8 +1,8 @@
 from langchain.schema import Document
-from fastapi import FastAPI,Request,Response,Depends
+from fastapi import FastAPI,Request,Response,Depends,HTTPException
 from fastapi.responses import JSONResponse
-from controllers.u_controllers import UploadUGVector,getUtweet,getUanswer,getUtranslate,UploadUGImageUUrl,getUimageuurl,AssessUContent,InsertQuestionU,loginU,registerU,forgotPasswordU,updatePasswordU
-from models.u_models import uTweet,uAnswer,ucorrect,QuestionUmodel,loginUmodel,registerUmodel,ForgotPasswordUmodel
+from controllers.u_controllers import UploadUGVector,getUtweet,getUanswer,getUtranslate,UploadUGImageUUrl,getUimageuurl,AssessUContent,InsertQuestionU,loginU,registerU,forgotPasswordU,updatePasswordU,beforeRegisterU
+from models.u_models import uTweet,uAnswer,ucorrect,QuestionUmodel,loginUmodel,registerUmodel,ForgotPasswordUmodel,confirmRegisterUmodel
 import jwt
 
 app = FastAPI()
@@ -12,7 +12,7 @@ def auth_middleware(request:Request):
 	if not token:
 		raise HTTPException(status_code=401, detail="No Session Found")
 	try:
-		jwt.decode(token,"SECRET_UG",algorithms=["HS256"])
+		jwt.decode(jwt=token,key="SECRET_UG",algorithms=["HS256"])
 	except Exception as e:
 		print(e)
 		raise HTTPException(status_code=401, detail="No Session Found")
@@ -20,53 +20,58 @@ def auth_middleware(request:Request):
 
 
 
-@app.post("/login")
+@app.post("/login",response_class=JSONResponse)
 def ulogin(ubody:loginUmodel,request:Request,response:Response):
-	if type(ubody.username) != 'string' or type(ubody.password) != 'string':
+	if type(ubody.username) != str or type(ubody.password) != str:
 		return "Username and password Must be of type string"
 	if loginU(ubody.username,ubody.password):
 		try:
-			token = jwt.encode({"user":ubody.username},"SECRET_UG",algorithms=["HS256"])
+			token = jwt.encode(payload={"user":ubody.username},key="SECRET_UG",algorithm="HS256")
 			response.set_cookie("session",token)
 		except Exception as e:
 			print(e)
-			JSONResponse(content={"ERROR":"Something Went Wrong While Logging In"},status_code=500)
+			return JSONResponse(content={"Message":"Something Went Wrong"},status_code=400)
+	else:
+		return JSONResponse(content={"Message":"Incorrect Username Or Password"},status_code=400)
 
 			
 
 			
-@app.post("/forgotpasswordU")
+@app.post("/forgotpassword",response_class=JSONResponse)
 def uForgotPassword(ubody:ForgotPasswordUmodel):
-	if type(ubody.email) != 'string':
-		return "email must be a string"
-	status = forgotPasswordU(ubody)
-	JSONResponse(context={"STATUS":status},status_code=200)
+	print(type(ubody.email))
+	if type(ubody.email) != str:
+		return JSONResponse(content={"Message":"email must be a string"},status_code=400)
+	status ,status_code= forgotPasswordU(ubody)
+	JSONResponse(content={"Message":status},status_code=status_code)
 
-@app.get("/reset_passwordU")
+@app.get("/updatepassword",response_class=JSONResponse)
 def uResetPassword(password: str = "",token : str=""):
 	if password and token:
 		resu = updatePasswordU(password,token)
-		JSONResponse(content={"STATUS":resu},status_code=200)
+		JSONResponse(content={"Message":resu},status_code=200)
 	if password and not token:
-		JSONResponse(content={"STATUS":"Provide a token"})
+		JSONResponse(content={"Message":"Provide a token"},status_code=400)
 	if not password and token:
-		JSONResponse(content={"STATUS":"Provide A new Password"})
-	JSONResponse(content={"STATUS":"Provide a username and a password"})
+		JSONResponse(content={"Message":"Provide A new Password"},status_code=400)
+	JSONResponse(content={"Message":"Provide a username and a password"},status_code=400)
 
 
 
 
-	
+@app.post("/getotp")
+def uRegister(ubody:registerUmodel):
+	resu,status_code = beforeRegisterU(ubody)
+	return JSONResponse(content={"Message":resu},status_code=status_code)
+
+
+
+
+
 @app.post("/register")
-def uregister(ubody:registerUmodel):
-	try:
-		if registerU(ubody):
-			JSONResponse(content={"SUCCESS":"User Created"},status_code=200)
-		JSONResponse(content={"ERROR":"Username or Email Already Exists"},status_code=400)
-	except Exception as e:
-		print(e)
-		JSONResponse(content={"ERROR":"Something Went Wrong while registering"},status_code=500)
-
+def uconfirmRegister(ubody:confirmRegisterUmodel):
+	resu = registerU(ubody)
+	return {"STATUS":resu}
 
 
 

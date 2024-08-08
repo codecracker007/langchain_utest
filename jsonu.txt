@@ -1,0 +1,63 @@
+{
+  "Details": [
+    {
+      "Subject ": "Physics",
+      "Topic ": "Electricity",
+      "Sub Topic": "Ohm’s Law"
+    },
+    {
+      "Subject ": "Physics",
+      "Topic ": "Magnetic Effects of Electric Current",
+      "Sub Topic": "Electromagnetic induction"
+    },
+    {
+      "Subject ": "Physics",
+      "Topic ": "Velocity",
+      "Sub Topic": "Acceleration"
+    },
+    {
+      "Subject ": "Biology",
+      "Topic ": "How do organisms reproduce",
+      "Sub Topic": "Sexual reproduction in animals"
+    },
+    {
+      "Subject ": "Biology",
+      "Topic ": "Life processes",
+      "Sub Topic": "Respiration in humans"
+    },
+    {
+      "Subject ": "Biology",
+      "Topic ": "Our environment",
+      "Sub Topic": "Food chains and food webs"
+    },
+    {
+      "Subject ": "English",
+      "Topic ": "A Shady Plot",
+      "Sub Topic": "John Hallock"
+    },
+    {
+      "Subject ": "English",
+      "Topic ": "Julius Caesar",
+      "Sub Topic": "Brutus"
+    },
+    {
+      "Subject ": "English",
+      "Topic ": "Ozymandias"
+    },
+    {
+      "Subject ": "History",
+      "Topic ": "The Age of Industrialization",
+      "Sub Topic": "Hand Labour and Steam Power:"
+    },
+    {
+      "Subject ": "History",
+      "Topic ": "The Rise of Nationalism in Europe",
+      "Sub Topic": "The Age of Revolutions: 1830-1848"
+    },
+    {
+      "Subject ": "History",
+      "Topic ": "Work, Life and Leisure",
+      "Sub Topic": "Characteristics of the City:"
+    }
+  ]
+}

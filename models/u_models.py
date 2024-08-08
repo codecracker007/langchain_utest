@@ -15,9 +15,16 @@ class loginUmodel(BaseModel):
 	username:str
 	password:str
 class registerUmodel(BaseModel):
+	email:str
+
+class confirmRegisterUmodel(BaseModel):
+	email:str
 	username:str
 	password:str
-	email:str
+	mobilenumber:str
+	Class: str
+	educationboard: str
+	token:str
 
 class ForgotPasswordUmodel(BaseModel):
 	username:str

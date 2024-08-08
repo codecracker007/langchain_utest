@@ -5,8 +5,10 @@ def insertIntoQuestionsU(cursorU,collectionU):
     return str(idU.inserted_id)
 
 def CheckifEmailPresent(cursorU,collectionU):
-    idu = cursorU.sahasra_users.users.Findone(dict(collectionU))
+    print(collectionU)
+    idu = cursorU.sahasra_users.users.find_one({"email":collectionU})
     if idu:
-        return str(idu.email)
+        print(idu)
+        return str(idu["email"])
     return False
 
