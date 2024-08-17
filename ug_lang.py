@@ -1,12 +1,22 @@
 from langchain.schema import Document
 from fastapi import FastAPI,Request,Response,Depends,HTTPException
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from controllers.u_controllers import UploadUGVector,getUtweet,getUanswer,getUtranslate,UploadUGImageUUrl,getUimageuurl,AssessUContent,InsertQuestionU,loginU,registerU,forgotPasswordU,updatePasswordU,beforeRegisterU
 from models.u_models import uTweet,uAnswer,ucorrect,QuestionUmodel,loginUmodel,registerUmodel,ForgotPasswordUmodel,confirmRegisterUmodel
 import jwt
 
 app = FastAPI()
 
+
+origin = ["*"]
+app.add_middleware(
+	CORSMiddleware,
+	allow_origins = origin,
+	allow_credentials = True,
+	allow_methods = ["*"],
+	allow_headers = ["*"],
+)
 def auth_middleware(request:Request):
 	token = request.headers.get("session")
 	if not token:
@@ -127,7 +137,7 @@ def get_utweet(body: uTweet):
 		print(e)
 		return {"uGEN":"ERROR"}
 
-@app.post("/api/uanswer")
+@app.post("/api/chat")
 def get_uanswer(body: uAnswer,request:Request):
 	question = body.question
 	print(question)
