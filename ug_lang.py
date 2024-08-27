@@ -2,8 +2,8 @@ from langchain.schema import Document
 from fastapi import FastAPI,Request,Response,Depends,HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from controllers.u_controllers import UploadUGVector,getUtweet,getUanswer,getUtranslate,UploadUGImageUUrl,getUimageuurl,AssessUContent,InsertQuestionU,loginU,registerU,forgotPasswordU,updatePasswordU,beforeRegisterU
-from models.u_models import uTweet,uAnswer,ucorrect,QuestionUmodel,loginUmodel,registerUmodel,ForgotPasswordUmodel,confirmRegisterUmodel
+from controllers.u_controllers import UploadUGVector,getUtweet,getUanswer,getUtranslate,UploadUGImageUUrl,getUimageuurl,AssessUContent,InsertQuestionU,loginU,registerU,forgotPasswordU,updatePasswordU,beforeRegisterU,checkAssessUContent,profileU,UpdateProfileU
+from models.u_models import uTweet,uAnswer,ucorrect,QuestionUmodel,loginUmodel,registerUmodel,ForgotPasswordUmodel,confirmRegisterUmodel,AssessUmodel,ProfileUmodel
 import jwt
 
 app = FastAPI()
@@ -18,11 +18,12 @@ app.add_middleware(
 	allow_headers = ["*"],
 )
 def auth_middleware(request:Request):
-	token = request.headers.get("session")
+	token = request.cookies.get("session")
 	if not token:
 		raise HTTPException(status_code=401, detail="No Session Found")
 	try:
-		jwt.decode(jwt=token,key="SECRET_UG",algorithms=["HS256"])
+		studentid  = jwt.decode(jwt=token,key="SECRET_UG",algorithms=["HS256"])["user"]
+		return studentid
 	except Exception as e:
 		print(e)
 		raise HTTPException(status_code=401, detail="No Session Found")
@@ -34,9 +35,10 @@ def auth_middleware(request:Request):
 def ulogin(ubody:loginUmodel,request:Request,response:Response):
 	if type(ubody.username) != str or type(ubody.password) != str:
 		return "Username and password Must be of type string"
-	if loginU(ubody.username,ubody.password):
+	studentuid = loginU(ubody.username,ubody.password)
+	if studentuid:
 		try:
-			token = jwt.encode(payload={"user":ubody.username},key="SECRET_UG",algorithm="HS256")
+			token = jwt.encode(payload={"user":studentuid},key="SECRET_UG",algorithm="HS256")
 			response.set_cookie("session",token)
 		except Exception as e:
 			print(e)
@@ -59,17 +61,17 @@ def uForgotPassword(ubody:ForgotPasswordUmodel):
 def uResetPassword(password: str = "",token : str=""):
 	if password and token:
 		resu = updatePasswordU(password,token)
-		JSONResponse(content={"Message":resu},status_code=200)
+		return JSONResponse(content={"Message":resu},status_code=200)
 	if password and not token:
-		JSONResponse(content={"Message":"Provide a token"},status_code=400)
+		return JSONResponse(content={"Message":"Provide a token"},status_code=400)
 	if not password and token:
-		JSONResponse(content={"Message":"Provide A new Password"},status_code=400)
-	JSONResponse(content={"Message":"Provide a username and a password"},status_code=400)
+		return JSONResponse(content={"Message":"Provide A new Password"},status_code=400)
+	return JSONResponse(content={"Message":"Provide a username and a password"},status_code=400)
 
 
 
 
-@app.post("/getotp")
+@app.post("/getotp",response_class=JSONResponse)
 def uRegister(ubody:registerUmodel):
 	resu,status_code = beforeRegisterU(ubody)
 	return JSONResponse(content={"Message":resu},status_code=status_code)
@@ -83,15 +85,30 @@ def uconfirmRegister(ubody:confirmRegisterUmodel):
 	resu = registerU(ubody)
 	return {"STATUS":resu}
 
+@app.post("/assessment",response_class=JSONResponse)
+def uSubmitAssessment(ubody:AssessUmodel,request:Request,studentid:str = Depends(auth_middleware)):
+	resu,status_code = checkAssessUContent(ubody,studentid)
+	print(f"UG RESU{resu}")
+	return JSONResponse(content=resu,status_code=status_code)
 
 
 
 
 
+@app.get("/profile",response_class=JSONResponse)
+def uProfile(request:Request,studentid:str = Depends(auth_middleware)):
+	print(studentid)
+	resu,status_code = profileU(studentid)
+	print(resu)
+	return JSONResponse(content=dict(resu),status_code=status_code)
 
 
 
-
+@app.post("/updateprofile",response_class=JSONResponse)
+def updateUProfile(ubody:ProfileUmodel,request:Request,studentid:str = Depends(auth_middleware)):
+	resu,status_code = UpdateProfileU(ubody,studentid)
+	
+	return JSONResponse(content=resu,status_code=status_code)
 
 
 
@@ -138,10 +155,10 @@ def get_utweet(body: uTweet):
 		return {"uGEN":"ERROR"}
 
 @app.post("/api/chat")
-def get_uanswer(body: uAnswer,request:Request):
+def get_uanswer(body: uAnswer,request:Request,studentid:str = Depends(auth_middleware)):
 	question = body.question
 	print(question)
-	u_answerGenerated = AssessUContent(question,"TESTUG")
+	u_answerGenerated = AssessUContent(question,"TESTUG",studentid)
 	print(u_answerGenerated)
 	return {"UGEN":str(u_answerGenerated)}
 

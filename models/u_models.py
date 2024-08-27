@@ -1,5 +1,5 @@
-from pydantic import BaseModel
-
+from pydantic import BaseModel,RootModel
+from typing import List,Dict
 
 
 class uTweet(BaseModel):
@@ -26,9 +26,13 @@ class confirmRegisterUmodel(BaseModel):
 	educationboard: str
 	token:str
 
+
+
+
 class ForgotPasswordUmodel(BaseModel):
 	username:str
 	email:str
+
 
 class QuestionUmodel(BaseModel):
 	Class:str
@@ -45,3 +49,21 @@ class QuestionUmodel(BaseModel):
 	explaination:str
 	image:str
 	questionset:str
+
+
+
+class questionAssessUmodel(BaseModel):
+	questionid:str
+	studentanswer:str
+
+
+class AssessUmodel(BaseModel):
+	d:List[Dict[str,str]]
+
+class ProfileUmodel(BaseModel):
+	email:str | None
+	username:str | None
+	mobilenumber:str | None
+	Class: str | None
+	educationboard: str | None
+	bio: str | None
