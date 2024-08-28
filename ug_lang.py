@@ -2,12 +2,51 @@ from langchain.schema import Document
 from fastapi import FastAPI,Request,Response,Depends,HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from controllers.u_controllers import UploadUGVector,getUtweet,getUanswer,getUtranslate,UploadUGImageUUrl,getUimageuurl,AssessUContent,InsertQuestionU,loginU,registerU,forgotPasswordU,updatePasswordU,beforeRegisterU,checkAssessUContent,profileU,UpdateProfileU
+from controllers.u_controllers import UploadUGVector, fetchAssessmentU, getAssessmentsU,getUtweet,getUanswer,getUtranslate,UploadUGImageUUrl,getUimageuurl,AssessUContent,InsertQuestionU,loginU,registerU,forgotPasswordU,updatePasswordU,beforeRegisterU,checkAssessUContent,profileU,UpdateProfileU
 from models.u_models import uTweet,uAnswer,ucorrect,QuestionUmodel,loginUmodel,registerUmodel,ForgotPasswordUmodel,confirmRegisterUmodel,AssessUmodel,ProfileUmodel
 import jwt
+import json
+import typing
+from starlette import background
+from bson.objectid import ObjectId
+
 
 app = FastAPI()
 
+class UGJSONResponse(JSONResponse):
+	media_type = "application/json"
+
+	def __init__(
+        self,
+        content: typing.Any,
+        status_code: int = 200,
+        headers: typing.Mapping[str, str] | None = None,
+        media_type: str | None = None,
+        background: background.BackgroundTask | None = None,
+    ) -> None:
+		super().__init__(content, status_code, headers, media_type, background)
+	
+	def render(self, content: typing.Any) -> bytes:
+			print("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDUGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG")
+			print(f"UGUG {content}")
+			for ug in content:
+				print(ug)
+			if type(content) == list:
+				for ug in content:
+					for k,v in ug.items():
+						if type(v) == ObjectId:
+							ug[k] = str(v)
+			else:
+				for k,v in content.items():
+					if type(v) == ObjectId:
+						content[k] = str(v)
+			return json.dumps(
+            	content,
+            	ensure_ascii=False,
+            	allow_nan=False,
+            	indent=None,
+            	separators=(",", ":"),
+        		).encode("utf-8")
 
 origin = ["*"]
 app.add_middleware(
@@ -17,6 +56,10 @@ app.add_middleware(
 	allow_methods = ["*"],
 	allow_headers = ["*"],
 )
+
+
+
+
 def auth_middleware(request:Request):
 	token = request.cookies.get("session")
 	if not token:
@@ -85,14 +128,23 @@ def uconfirmRegister(ubody:confirmRegisterUmodel):
 	resu = registerU(ubody)
 	return {"STATUS":resu}
 
-@app.post("/assessment",response_class=JSONResponse)
+@app.post("/assessment",response_class=UGJSONResponse)
 def uSubmitAssessment(ubody:AssessUmodel,request:Request,studentid:str = Depends(auth_middleware)):
 	resu,status_code = checkAssessUContent(ubody,studentid)
 	print(f"UG RESU{resu}")
+	return UGJSONResponse(content=resu,status_code=status_code)
+
+
+@app.get("/assessments",response_class=JSONResponse)
+def uGetAssessment(studentid:str = Depends(auth_middleware)):
+	resu,status_code = getAssessmentsU(studentid)
+	return resu,status_code
 	return JSONResponse(content=resu,status_code=status_code)
 
-
-
+@app.get("/assessment/{assessment_id}",response_class=UGJSONResponse)
+def uGetAssessmentWithId(assessment_id,studentid:str = Depends(auth_middleware)):
+	resu,status_code = fetchAssessmentU(studentid,assessment_id)
+	return UGJSONResponse(content=resu,status_code=status_code)
 
 
 @app.get("/profile",response_class=JSONResponse)
