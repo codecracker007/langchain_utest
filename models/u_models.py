@@ -5,6 +5,10 @@ from typing import List,Dict
 class uTweet(BaseModel):
 	tweet:str
 
+
+class uploadVectorUmodel(BaseModel):
+	text:str
+
 class uAnswer(BaseModel):
 	question:str
 
@@ -12,9 +16,12 @@ class ucorrect(BaseModel):
 	ucgrammar:dict
 
 class loginUmodel(BaseModel):
-	username:str
+	mobilenumberoremail:str
 	password:str
+
+
 class registerUmodel(BaseModel):
+	phonenumber:str
 	email:str
 
 class confirmRegisterUmodel(BaseModel):
@@ -27,11 +34,14 @@ class confirmRegisterUmodel(BaseModel):
 	token:str
 
 
+class UpdatePasswordUmodel(BaseModel):
+	password:str
+	token:str
 
 
 class ForgotPasswordUmodel(BaseModel):
-	username:str
-	email:str
+	mobilenumberoremail:str
+
 
 
 class QuestionUmodel(BaseModel):
@@ -58,7 +68,7 @@ class questionAssessUmodel(BaseModel):
 
 
 class AssessUmodel(BaseModel):
-	d:List[Dict[str,str]]
+	questions:List[questionAssessUmodel]
 
 class ProfileUmodel(BaseModel):
 	email:str | None
