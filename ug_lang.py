@@ -1,4 +1,5 @@
 import datetime
+from fastapi.middleware.cors import CORSMiddleware
 import time
 from langchain.schema import Document
 from fastapi import FastAPI,Request,Response,Depends,HTTPException
@@ -15,6 +16,16 @@ from bson.objectid import ObjectId
 
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins
+    allow_credentials=True,  # Allows cookies and credentials
+    allow_methods=["*"],  # Allow all HTTP methods
+    allow_headers=["*"],  # Allow all headers
+)
+
+
 c = pymongo.MongoClient("mongodb+srv://chandrakasturi:Bisleri1234@cluster0.ehbe5dz.mongodb.net/",server_api=pymongo.server_api.ServerApi('1'))
 class UGJSONResponse(JSONResponse):
 	media_type = "application/json"
@@ -61,7 +72,11 @@ class UGJSONResponse(JSONResponse):
 
 origins = [
     "http://localhost:3000",  
-    "https://fastapi.tiangolo.com" 
+    "https://fastapi.tiangolo.com",
+	"http://localhost:3001",
+	"https://sahasraai.vercel.app",
+	"https://www.sahasra.ai",
+	"https://questionbank-one.vercel.app"
 ]
 
 

@@ -6,9 +6,9 @@ def insertIntoQuestionsU(cursorU,collectionU):
 
 def CheckifEmailPresent(cursorU,collectionU,mobileno=None):
     if mobileno:
-        idu = cursorU.sahasra_users.users.find_one({"$or":[{"email":{"$eq":f"{collectionU}"}},{"mobilenumber":{"$eq":f"{mobileno}"}}]})
+        idu = cursorU.sahasra_users.users.find_one({"$or":[{"email":{"$eq":f"{collectionU.lower()}"}},{"mobilenumber":{"$eq":f"{mobileno.lower()}"}}]})
     else:
-        idu = cursorU.sahasra_users.users.find_one({"$or":[{"email":{"$eq":f"{collectionU}"}},{"mobilenumber":{"$eq":f"{collectionU}"}}]})
+        idu = cursorU.sahasra_users.users.find_one({"$or":[{"email":{"$eq":f"{collectionU.lower()}"}},{"mobilenumber":{"$eq":f"{collectionU.lower()}"}}]})
     print(collectionU)
     
     if idu:

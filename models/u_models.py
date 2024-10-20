@@ -1,5 +1,5 @@
 from pydantic import BaseModel,RootModel
-from typing import List,Dict
+from typing import List,Dict,Optional
 
 
 class uTweet(BaseModel):
@@ -45,26 +45,31 @@ class ForgotPasswordUmodel(BaseModel):
 
 
 class QuestionUmodel(BaseModel):
-	Class:str
-	subject:str
-	topic:str
-	subtopic:str
-	question:str
-	option1:str
-	option2:str
-	option3:str
-	option4:str
-	correctanswer:str|None
-	level:str
-	explaination:str
-	image:str
-	questionset:str
-
+    Class: str
+    subject: str
+    topic: str
+    subtopic: Optional[str] = None
+    question: str
+    option1: str
+    option2: str
+    option3: str
+    option4: str
+    correctanswer: Optional[str] = None
+    level: str
+    explaination: str
+    explainationimage: Optional[str] = None 
+    questionimage: Optional[str]  = None
+    questionset: Optional[str]  = None
+    schooldid: Optional[str]  = None
+    qsetboard: Optional[str]  = None
+    qsetdescription: Optional[str]  = None  
+    marks: str  
+    descriptiveanswer: Optional[str]   = None
 
 
 class questionAssessUmodel(BaseModel):
 	questionid:str
-	studentanswer:str
+	studentanswer:str | None
 
 
 class AssessUmodel(BaseModel):

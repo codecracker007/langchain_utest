@@ -4,12 +4,12 @@ from jinja2 import Template
 import requests
 
 def send_email(email,token):
-   d = open("emailU.html").read()
-   body = Template(d).render(token=token)
+   d = open("forgotpasswordU.html").read()
+   body = Template(d).render(otp=token)
    subject = "Forgot Password"
-   sender = "administrator@blockwiselearning.com"
-   data = {"from":sender,"to":email,"subject":subject,"text":token}
-   url = "https://78e09c4ef5b9bb195c9ab658:@api.forwardemail.net/v1/emails"
+   sender = "no-reply@sahasra.ai"
+   data = {"from":sender,"to":email,"subject":subject,"html":body}
+   url = "https://6c5d34701c432e9598fc80e5:@api.forwardemail.net/v1/emails"
    r = requests.post(url,data=data)
    print(r.text)
 
@@ -19,7 +19,7 @@ def register_email(email,token):
    d = open("emailU.html").read()
    body = Template(d).render(token=token)
    subject = "Welcome to Sahasra AI - Use This OTP to Get Started"
-   sender = "administrator@blockwiselearning.com"
+   sender = "no-reply@sahasra.ai"
    data = {"from":sender,"to":email,"subject":subject,"html":body}
    url = "https://6c5d34701c432e9598fc80e5:@api.forwardemail.net/v1/emails"
    r = requests.post(url,data=data)
